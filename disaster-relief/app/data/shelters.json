@@ -1,0 +1,30 @@
+[
+  {
+    "name": "St. Mary's School Relief Camp",
+    "district": "Wayanad",
+    "capacity": 300,
+    "coordinates": "11.6050, 76.0830",
+    "phone": "+91-4936-220234"
+  },
+  {
+    "name": "Town Hall Evacuation Center",
+    "district": "Alappuzha",
+    "capacity": 500,
+    "coordinates": "9.4981, 76.3388",
+    "phone": "+91-477-2251720"
+  },
+  {
+    "name": "Government College Shelter",
+    "district": "Ernakulam",
+    "capacity": 400,
+    "coordinates": "9.9816, 76.2999",
+    "phone": "+91-484-2354321"
+  },
+  {
+    "name": "Community Hall Relief Camp",
+    "district": "Idukki",
+    "capacity": 200,
+    "coordinates": "9.8492, 76.9790",
+    "phone": "+91-4862-222507"
+  }
+]

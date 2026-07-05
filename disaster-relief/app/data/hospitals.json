@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Wayanad District Hospital",
+    "district": "Wayanad",
+    "speciality": "General Medicine, Trauma, Orthopedics",
+    "emergency": "24/7 ICU & Trauma Care"
+  },
+  {
+    "name": "Alappuzha General Hospital",
+    "district": "Alappuzha",
+    "speciality": "General Medicine, Cardiology, Burn Care",
+    "emergency": "24/7 ICU Support"
+  },
+  {
+    "name": "Ernakulam Government Medical College",
+    "district": "Ernakulam",
+    "speciality": "Super Speciality, ICU, Pediatrics, Cardiology",
+    "emergency": "24/7 Multi-Speciality ICU & Trauma Wing"
+  },
+  {
+    "name": "Idukki District Hospital",
+    "district": "Idukki",
+    "speciality": "General Medicine, Emergency Medicine",
+    "emergency": "24/7 Emergency Wing"
+  }
+]
