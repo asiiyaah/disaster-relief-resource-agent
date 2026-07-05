@@ -1,4 +1,8 @@
 import os
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"), override=True)
+os.environ["GEMINI_MODEL"] = "gemini-2.0-flash"
+
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
 
