@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # Ensure the app folder is in python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"), override=True)
-os.environ["GEMINI_MODEL"] = "gemini-2.0-flash"
+os.environ["GEMINI_MODEL"] = "gemini-2.5-flash"
 
 from google.adk.agents.run_config import RunConfig, StreamingMode
 from google.adk.runners import Runner

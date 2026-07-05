@@ -92,7 +92,15 @@ def build_index() -> str:
 
 
 def retrieve_knowledge(query: str, top_k: int = 3) -> str:
-    """Queries the local NumPy index and returns top matched context chunks."""
+    """Queries the local NumPy index and returns top matched context chunks.
+
+    Args:
+        query: The user query string to search for in the guidelines.
+        top_k: Number of relevant context chunks to retrieve. Defaults to 3.
+
+    Returns:
+        A formatted string of context chunks matching the query.
+    """
     if not os.path.exists(INDEX_PATH):
         # Auto-build index if missing
         status = build_index()
@@ -119,7 +127,6 @@ def retrieve_knowledge(query: str, top_k: int = 3) -> str:
         query_vector = np.array(res.embeddings[0].values, dtype=np.float32)
 
         # Calculate Cosine Similarity
-        # similarities = dot_product(A, B) / (norm(A) * norm(B))
         dot_products = np.dot(embeddings, query_vector)
         embeddings_norms = np.linalg.norm(embeddings, axis=1)
         query_norm = np.linalg.norm(query_vector)
@@ -135,8 +142,9 @@ def retrieve_knowledge(query: str, top_k: int = 3) -> str:
         contexts = []
         for idx in top_indices:
             score = similarities[idx]
-            if score > 0.3:  # Only include relatively relevant context
-                contexts.append(f"[{sources[idx]}]:\n{chunks[idx]}")
+            # Lower threshold to 0.15 for soft matches, displaying similarity metrics
+            if score > 0.15:
+                contexts.append(f"[{sources[idx]} (Relevance: {score:.2f})]:\n{chunks[idx]}")
 
         if not contexts:
             return "No matching guidelines found in local files."
