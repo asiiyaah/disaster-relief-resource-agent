@@ -10,15 +10,15 @@ from google.adk.agents.context import Context
 from google.adk.events.event import Event
 from google.genai import types
 
-from app.prompts import CLASSIFIER_INSTRUCTION, SHELTER_INSTRUCTION, MEDICAL_INSTRUCTION, EMERGENCY_INSTRUCTION
+from app.prompts import CLASSIFIER_INSTRUCTION, SHELTER_INSTRUCTION, MEDICAL_INSTRUCTION, EMERGENCY_INSTRUCTION, GENERAL_INSTRUCTION
 from app.tools import lookup_shelters, lookup_hospitals, lookup_helplines
 
 
 # --- 1. Schemas ---
 
 class ClassificationResult(BaseModel):
-    route: Literal["shelter", "medical", "emergency"] = Field(
-        description="The target category for routing the request. Use 'emergency' for critical danger or vulnerable status, 'shelter' for evacuation/displacement/camps, and 'medical' for non-life-threatening medical questions."
+    route: Literal["shelter", "medical", "emergency", "general"] = Field(
+        description="The target category for routing the request. Use 'emergency' for critical danger or vulnerable status, 'shelter' for evacuation/displacement/camps, 'medical' for non-life-threatening medical questions, and 'general' for generic greetings or chit-chat."
     )
     priority: Literal["low", "medium", "high", "critical"] = Field(
         description="The priority level of the emergency request."
@@ -76,6 +76,15 @@ emergency_agent = Agent(
     tools=[lookup_helplines],
 )
 
+general_agent = Agent(
+    name="general_agent",
+    model=Gemini(
+        model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+        retry_options=types.HttpRetryOptions(attempts=3),
+    ),
+    instruction=GENERAL_INSTRUCTION,
+)
+
 
 # --- 3. Workflow Nodes & Routing ---
 
@@ -109,7 +118,7 @@ def route_decision(ctx: Context, node_input: dict) -> Event:
     
     is_vulnerable = str(vulnerable_person).lower() in escalation_triggers if vulnerable_person else False
     
-    if priority == "critical" or is_vulnerable:
+    if (priority == "critical" and route != "shelter") or is_vulnerable:
         route = "emergency"
 
     # Merge into context state
@@ -138,6 +147,7 @@ root_agent = Workflow(
             "shelter": shelter_agent,
             "medical": medical_agent,
             "emergency": emergency_agent,
+            "general": general_agent,
         }),
     ],
 )

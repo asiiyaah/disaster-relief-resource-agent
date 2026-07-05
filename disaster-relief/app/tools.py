@@ -1,3 +1,4 @@
+import difflib
 import json
 import os
 from google.adk.tools import ToolContext
@@ -25,22 +26,34 @@ def lookup_shelters(district: str) -> dict:
         with open(shelters_file, "r", encoding="utf-8") as f:
             shelters = json.load(f)
 
-        # Case-insensitive matching
-        matched = [
-            s
-            for s in shelters
-            if s["district"].strip().lower() == district.strip().lower()
-        ]
+        # Unique districts list
+        all_districts = list({s["district"] for s in shelters})
+        search_term = district.strip().lower()
+        matched_district = None
 
-        if matched:
+        # 1. Direct substring match (supports partials like "way" -> "Wayanad")
+        for d in all_districts:
+            if search_term in d.strip().lower() or d.strip().lower() in search_term:
+                matched_district = d
+                break
+
+        # 2. Fuzzy match close spellings (cutoff=0.5 for tolerance)
+        if not matched_district:
+            close_matches = difflib.get_close_matches(district.strip(), all_districts, n=1, cutoff=0.5)
+            if close_matches:
+                matched_district = close_matches[0]
+
+        if matched_district:
+            matched = [s for s in shelters if s["district"] == matched_district]
             return {"status": "success", "shelters": matched}
         else:
+            available = ", ".join(all_districts)
             return {
                 "status": "not_found",
                 "message": (
-                    f"No shelters found in district '{district}'. Please specify"
-                    " another nearby district in Kerala (e.g. Wayanad, Alappuzha,"
-                    " Ernakulam, Idukki)."
+                    f"Sorry, I couldn't find shelter information for district '{district}' in our records. "
+                    f"Currently available districts are: {available}. "
+                    "Please check the spelling or specify another nearby district in Kerala."
                 ),
             }
     except Exception as e:
@@ -64,20 +77,34 @@ def lookup_hospitals(district: str) -> dict:
         with open(hospitals_file, "r", encoding="utf-8") as f:
             hospitals = json.load(f)
 
-        matched = [
-            h
-            for h in hospitals
-            if h["district"].strip().lower() == district.strip().lower()
-        ]
+        # Unique districts list
+        all_districts = list({h["district"] for h in hospitals})
+        search_term = district.strip().lower()
+        matched_district = None
 
-        if matched:
+        # 1. Direct substring match
+        for d in all_districts:
+            if search_term in d.strip().lower() or d.strip().lower() in search_term:
+                matched_district = d
+                break
+
+        # 2. Fuzzy match close spellings
+        if not matched_district:
+            close_matches = difflib.get_close_matches(district.strip(), all_districts, n=1, cutoff=0.5)
+            if close_matches:
+                matched_district = close_matches[0]
+
+        if matched_district:
+            matched = [h for h in hospitals if h["district"] == matched_district]
             return {"status": "success", "hospitals": matched}
         else:
+            available = ", ".join(all_districts)
             return {
                 "status": "not_found",
                 "message": (
-                    f"No hospitals found in district '{district}'. Please specify another Kerala district "
-                    "(e.g. Wayanad, Alappuzha, Ernakulam, Idukki) or contact local state helpline at 1077."
+                    f"Sorry, no active hospitals found in district '{district}' in our records. "
+                    f"Currently available districts are: {available}. "
+                    "Please check the spelling or contact the local state medical helpline at 108."
                 ),
             }
     except Exception as e:

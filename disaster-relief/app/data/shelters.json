@@ -3,6 +3,7 @@
     "name": "St. Mary's School Relief Camp",
     "district": "Wayanad",
     "capacity": 300,
+    "address": "St. Mary's H.S.S., Sultan Bathery, Wayanad, Pin: 673592",
     "coordinates": "11.6050, 76.0830",
     "phone": "+91-4936-220234"
   },
@@ -10,6 +11,7 @@
     "name": "Town Hall Evacuation Center",
     "district": "Alappuzha",
     "capacity": 500,
+    "address": "Municipal Town Hall, Near KSRTC Stand, Alappuzha, Pin: 688011",
     "coordinates": "9.4981, 76.3388",
     "phone": "+91-477-2251720"
   },
@@ -17,6 +19,7 @@
     "name": "Government College Shelter",
     "district": "Ernakulam",
     "capacity": 400,
+    "address": "Government Maharaja's College Ground Hall, Marine Drive, Kochi, Pin: 682011",
     "coordinates": "9.9816, 76.2999",
     "phone": "+91-484-2354321"
   },
@@ -24,7 +27,24 @@
     "name": "Community Hall Relief Camp",
     "district": "Idukki",
     "capacity": 200,
+    "address": "Panchayat Community Hall, Near Bus Stand, Thodupuzha, Idukki, Pin: 685584",
     "coordinates": "9.8492, 76.9790",
     "phone": "+91-4862-222507"
+  },
+  {
+    "name": "Kozhikode Youth Center Camp",
+    "district": "Kozhikode",
+    "capacity": 350,
+    "address": "Regional Youth Welfare Hall, East Hill, Kozhikode, Pin: 673005",
+    "coordinates": "11.2804, 75.7885",
+    "phone": "+91-495-2381245"
+  },
+  {
+    "name": "V.K.N. Menon Indoor Stadium Relief Camp",
+    "district": "Thrissur",
+    "capacity": 450,
+    "address": "VKN Indoor Stadium, Palace Road, Thrissur, Pin: 680020",
+    "coordinates": "10.5312, 76.2201",
+    "phone": "+91-487-2334522"
   }
 ]

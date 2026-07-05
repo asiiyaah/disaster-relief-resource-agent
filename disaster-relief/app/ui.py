@@ -50,18 +50,18 @@ def respond(message: str, chat_history, request: gr.Request):
         )
         
         full_response = ""
-        yielded_nodes = set()
+        node_outputs = {}
         
         for event in events:
             # Check for error nodes/crashes
             if getattr(event, "error_code", None) or getattr(event, "error_message", None):
                 err_msg = event.error_message or ""
-                # Rate limit hint
-                if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
+                # Rate limit or server load hint
+                if any(code in err_msg for code in ["429", "503", "RESOURCE_EXHAUSTED", "UNAVAILABLE"]):
                     full_response = (
-                        "⚠️ **Gemini API Rate Limit (429) Encountered.**\n\n"
-                        "Our free tier API quota is temporarily exhausted due to high traffic. "
-                        "Please wait about 45 seconds and try sending your request again."
+                        "⚠️ **Gemini API Service Temporarily Unavailable (503/429) or High Demand.**\n\n"
+                        "The AI servers are currently experiencing heavy traffic. "
+                        "Please wait about 30 seconds and try sending your request again."
                     )
                 else:
                     full_response = f"❌ **Error occurred:** {event.error_code}\n\n{err_msg}"
@@ -73,27 +73,34 @@ def respond(message: str, chat_history, request: gr.Request):
                 
             if event.content and event.content.parts:
                 node_path = event.node_info.path if event.node_info else "unknown"
-                # If we already streamed partial chunks for this node, skip the final aggregated event
-                if getattr(event, "partial", None) is False and node_path in yielded_nodes:
-                    continue
-                    
                 text = "".join(p.text for p in event.content.parts if p.text)
                 if text:
-                    full_response += text
-                    yielded_nodes.add(node_path)
+                    is_partial = getattr(event, "partial", True)
+                    if is_partial:
+                        # Accumulate delta text for this node
+                        node_outputs[node_path] = node_outputs.get(node_path, "") + text
+                    else:
+                        # Final aggregated content replaces the delta buffer
+                        node_outputs[node_path] = text
+                    
+                    # Reconstruct the response without duplication
+                    full_response = "".join(
+                        val for path, val in node_outputs.items()
+                        if "classifier_agent" not in path
+                    )
                     yield full_response
                     
         # Fallback if no text event was yielded
-        if not yielded_nodes:
+        if not node_outputs:
             yield "The request was processed, but no content was returned. Please try rephrasing your prompt."
             
     except Exception as e:
         err_str = str(e)
-        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+        if any(code in err_str for code in ["429", "503", "RESOURCE_EXHAUSTED", "UNAVAILABLE"]):
             yield (
-                "⚠️ **Gemini API Rate Limit (429) Encountered.**\n\n"
-                "Our free tier API quota is temporarily exhausted due to high traffic. "
-                "Please wait about 45 seconds and try sending your request again."
+                "⚠️ **Gemini API Service Temporarily Unavailable (503/429) or High Demand.**\n\n"
+                "The AI servers are currently experiencing heavy traffic. "
+                "Please wait about 30 seconds and try sending your request again."
             )
         else:
             yield f"⚠️ **System Error:** {err_str}"
@@ -107,7 +114,7 @@ theme = gr.themes.Soft(
     font=[gr.themes.GoogleFont("Outfit"), "sans-serif"]
 )
 
-with gr.Blocks(theme=theme, title="Kerala Emergency Relief Portal") as demo:
+with gr.Blocks(title="Kerala Emergency Relief Portal") as demo:
     gr.HTML(
         """
         <div style="text-align: center; max-width: 800px; margin: 0 auto; padding: 20px;">
@@ -163,4 +170,4 @@ if __name__ == "__main__":
     demo.queue()
     # Run server locally on 0.0.0.0, using GRADIO_SERVER_PORT environment variable if set
     port = int(os.getenv("GRADIO_SERVER_PORT", 8080))
-    demo.launch(server_name="0.0.0.0", server_port=port)
+    demo.launch(server_name="0.0.0.0", server_port=port, theme=theme)

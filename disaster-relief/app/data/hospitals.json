@@ -2,25 +2,49 @@
   {
     "name": "Wayanad District Hospital",
     "district": "Wayanad",
-    "speciality": "General Medicine, Trauma, Orthopedics",
-    "emergency": "24/7 ICU & Trauma Care"
+    "address": "Mananthavady, Wayanad, Kerala, Pin: 670645",
+    "speciality": "General Medicine, Trauma, Orthopedics, Pediatrics",
+    "emergency": "24/7 ICU & Trauma Care",
+    "phone": "+91-4935-240245"
   },
   {
     "name": "Alappuzha General Hospital",
     "district": "Alappuzha",
-    "speciality": "General Medicine, Cardiology, Burn Care",
-    "emergency": "24/7 ICU Support"
+    "address": "Iron Bridge, Alappuzha, Kerala, Pin: 688001",
+    "speciality": "General Medicine, Cardiology, Burn Care, Nephrology",
+    "emergency": "24/7 ICU Support & Ambulance",
+    "phone": "+91-477-2251342"
   },
   {
     "name": "Ernakulam Government Medical College",
     "district": "Ernakulam",
-    "speciality": "Super Speciality, ICU, Pediatrics, Cardiology",
-    "emergency": "24/7 Multi-Speciality ICU & Trauma Wing"
+    "address": "HMT Road, Kalamassery, Kochi, Pin: 683503",
+    "speciality": "Super Speciality, ICU, Pediatrics, Cardiology, Neurology",
+    "emergency": "24/7 Multi-Speciality ICU & Trauma Wing",
+    "phone": "+91-484-2573111"
   },
   {
     "name": "Idukki District Hospital",
     "district": "Idukki",
-    "speciality": "General Medicine, Emergency Medicine",
-    "emergency": "24/7 Emergency Wing"
+    "address": "Painavu, Idukki, Kerala, Pin: 685603",
+    "speciality": "General Medicine, Emergency Medicine, Surgery",
+    "emergency": "24/7 Emergency Wing & Basic ICU Support",
+    "phone": "+91-4862-232422"
+  },
+  {
+    "name": "Kozhikode Government Medical College",
+    "district": "Kozhikode",
+    "address": "Medical College Junction, Kozhikode, Pin: 673008",
+    "speciality": "Trauma Care, Burn Unit, ICU, Cardiology, Pediatrics",
+    "emergency": "24/7 Level-1 Trauma Care & Multi-Speciality ICU",
+    "phone": "+91-495-2350212"
+  },
+  {
+    "name": "Thrissur Government Medical College",
+    "district": "Thrissur",
+    "address": "Velappaya, Mulankunnathukavu, Thrissur, Pin: 680596",
+    "speciality": "Emergency Medicine, General Surgery, Cardiology, ICU Support",
+    "emergency": "24/7 Emergency ICU and Ambulance Fleet",
+    "phone": "+91-487-2200311"
   }
 ]

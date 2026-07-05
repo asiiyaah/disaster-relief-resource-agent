@@ -2,9 +2,20 @@
   "Police": "100",
   "Fire Force": "101",
   "Disaster Management": "1078",
-  "District Control Room": "+91-471-2364424",
-  "NGOs": {
-    "Disaster Response Volunteers": "+91-94470-00000",
-    "Voluntary Rescue Alliance": "+91-94470-11111"
+  "Medical Ambulance (Common)": "108",
+  "Health Helpline (DISHA)": "1056",
+  "State Emergency Operations Center": "+91-471-2364424",
+  "District Control Rooms": {
+    "Wayanad": "+91-4936-202234",
+    "Alappuzha": "+91-477-2238511",
+    "Ernakulam": "+91-484-2423513",
+    "Idukki": "+91-4862-233111",
+    "Kozhikode": "+91-495-2371400",
+    "Thrissur": "+91-487-2361020"
+  },
+  "NGOs and Volunteer Groups": {
+    "Disaster Response Volunteers (DRV)": "+91-94470-00000",
+    "Voluntary Rescue Alliance (VRA)": "+91-94470-11111",
+    "Kerala Volunteers Helpdesk": "+91-94470-22222"
   }
 }
