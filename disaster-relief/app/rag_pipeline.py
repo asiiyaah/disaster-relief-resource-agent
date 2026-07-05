@@ -69,7 +69,7 @@ def build_index() -> str:
         # Batch embed chunks
         for chunk in chunks_list:
             res = client.models.embed_content(
-                model="text-embedding-004",
+                model="gemini-embedding-001",
                 contents=chunk
             )
             vector = res.embeddings[0].values
@@ -113,7 +113,7 @@ def retrieve_knowledge(query: str, top_k: int = 3) -> str:
         # Embed user query
         client = genai.Client()
         res = client.models.embed_content(
-            model="text-embedding-004",
+            model="gemini-embedding-001",
             contents=query
         )
         query_vector = np.array(res.embeddings[0].values, dtype=np.float32)
