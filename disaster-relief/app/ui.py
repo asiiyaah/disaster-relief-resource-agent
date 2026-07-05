@@ -167,6 +167,16 @@ with gr.Blocks(title="Kerala Emergency Relief Portal") as demo:
             )
 
 if __name__ == "__main__":
+    # Auto-build RAG index on startup if missing
+    try:
+        from app.rag_pipeline import build_index, INDEX_PATH
+        if not os.path.exists(INDEX_PATH):
+            print("🚀 RAG index not found. Building index from local documents...")
+            status = build_index()
+            print(f"Index build status: {status}")
+    except Exception as e:
+        print(f"Error building RAG index on startup: {e}")
+
     demo.queue()
     # Run server locally on 0.0.0.0, using GRADIO_SERVER_PORT environment variable if set
     port = int(os.getenv("GRADIO_SERVER_PORT", 8080))

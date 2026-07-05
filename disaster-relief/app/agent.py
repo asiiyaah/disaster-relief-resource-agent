@@ -10,15 +10,16 @@ from google.adk.agents.context import Context
 from google.adk.events.event import Event
 from google.genai import types
 
-from app.prompts import CLASSIFIER_INSTRUCTION, SHELTER_INSTRUCTION, MEDICAL_INSTRUCTION, EMERGENCY_INSTRUCTION, GENERAL_INSTRUCTION
+from app.prompts import CLASSIFIER_INSTRUCTION, SHELTER_INSTRUCTION, MEDICAL_INSTRUCTION, EMERGENCY_INSTRUCTION, GENERAL_INSTRUCTION, GUIDANCE_INSTRUCTION
 from app.tools import lookup_shelters, lookup_hospitals, lookup_helplines
+from app.rag_pipeline import retrieve_knowledge
 
 
 # --- 1. Schemas ---
 
 class ClassificationResult(BaseModel):
-    route: Literal["shelter", "medical", "emergency", "general"] = Field(
-        description="The target category for routing the request. Use 'emergency' for critical danger or vulnerable status, 'shelter' for evacuation/displacement/camps, 'medical' for non-life-threatening medical questions, and 'general' for generic greetings or chit-chat."
+    route: Literal["shelter", "medical", "emergency", "general", "guidance"] = Field(
+        description="The target category for routing the request. Use 'emergency' for critical danger or vulnerable status, 'shelter' for evacuation/displacement/camps, 'medical' for non-life-threatening medical questions, 'general' for generic greetings, and 'guidance' for general recovery instructions or disaster safety guidelines."
     )
     priority: Literal["low", "medium", "high", "critical"] = Field(
         description="The priority level of the emergency request."
@@ -85,6 +86,16 @@ general_agent = Agent(
     instruction=GENERAL_INSTRUCTION,
 )
 
+guidance_agent = Agent(
+    name="guidance_agent",
+    model=Gemini(
+        model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+        retry_options=types.HttpRetryOptions(attempts=3),
+    ),
+    instruction=GUIDANCE_INSTRUCTION,
+    tools=[retrieve_knowledge],
+)
+
 
 # --- 3. Workflow Nodes & Routing ---
 
@@ -148,6 +159,7 @@ root_agent = Workflow(
             "medical": medical_agent,
             "emergency": emergency_agent,
             "general": general_agent,
+            "guidance": guidance_agent,
         }),
     ],
 )
