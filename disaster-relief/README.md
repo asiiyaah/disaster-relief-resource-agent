@@ -181,6 +181,115 @@ docker run -e GOOGLE_API_KEY=your-key -p 8080:8080 disaster-relief
 
 ---
 
+## 🗓️ Development Log — What We Built
+
+A chronological record of everything built in this session.
+
+---
+
+### ✅ Phase 1 — Project Scaffold
+- Initialized project with `google-agents-cli scaffold`
+- Set up `uv` as the package manager with `pyproject.toml`
+- Configured environment variables via `.env` (API key, model selection, Vertex AI toggle)
+- Established folder structure: `app/`, `tests/`, `docs/`
+
+---
+
+### ✅ Phase 2 — Classifier Agent
+- Defined `ClassificationResult` Pydantic schema with fields:
+  - `route`: `"shelter" | "medical" | "emergency"`
+  - `priority`: `"low" | "medium" | "high" | "critical"`
+  - `vulnerable_person`: detects pregnant, elderly, infant, disabled, etc.
+  - `disaster_type`: flood, landslide, cyclone, heavy rain
+- Built `classifier_agent` using ADK `Agent` with `output_schema=ClassificationResult`
+- Wrote detailed `CLASSIFIER_INSTRUCTION` prompt with classification rules
+
+---
+
+### ✅ Phase 3 — Shelter Agent
+- Built `shelter_agent` with `lookup_shelters(district)` tool
+- Created `app/data/shelters.json` — mock database of Kerala relief camps (Wayanad, Alappuzha, Ernakulam, Idukki)
+- Wrote `SHELTER_INSTRUCTION` prompt: finds camps, gives evacuation guidance, lists essential items to pack
+
+---
+
+### ✅ Phase 4 — Medical Agent
+- Built `medical_agent` with `lookup_hospitals(district)` tool
+- Created `app/data/hospitals.json` — mock database of Kerala hospitals with ICU/emergency support
+- Wrote `MEDICAL_INSTRUCTION` prompt: recommends hospitals, gives first-aid advice, lists emergency numbers (108, 1056)
+
+---
+
+### ✅ Phase 5 — Emergency Escalation Agent
+- Built `emergency_agent` with `lookup_helplines()` tool
+- Created `app/data/helplines.json` — state and NGO emergency helpline numbers
+- Wrote `EMERGENCY_INSTRUCTION` prompt: critical alert, immediate safety actions, Police (100), Fire (101), KSDMA (1078)
+- Implemented automatic escalation in `route_decision()`:
+  - Triggers if `priority == "critical"` **or** if `vulnerable_person` is in: `{pregnant, infant, elderly, disabled, unconscious, chest pain, blocked roads}`
+
+---
+
+### ✅ Phase 6 — ADK Workflow & Routing
+- Composed all agents into a `Workflow` with edges:
+  ```
+  START → classifier_agent → route_decision() → {shelter|medical|emergency}_agent
+  ```
+- `route_decision()` is a pure Python function that reads classifier output from `ctx.state`, applies escalation overrides, and returns an `Event` with the routing key
+
+---
+
+### ✅ Phase 7 — Gradio Chat UI
+- Built `app/ui.py` with `gr.ChatInterface` and SSE streaming (`StreamingMode.SSE`)
+- Premium Gradio theme using `Outfit` Google Font, teal/slate color palette
+- Sidebar with emergency helpline numbers and vulnerability escalation info
+- Example queries pre-loaded in the chat input
+
+---
+
+### ✅ Phase 8 — Streaming Bug Fixes
+- **Bug 1 — Classifier JSON shown to user:** ADK was streaming `classifier_agent` node events to the UI. Fixed by filtering events where `event.node_info.path` contains `"classifier_agent"`.
+- **Bug 2 — Response duplicated in chat:** ADK emits both `partial=True` (incremental chunks) and `partial=False` (final aggregated event) per node. Fixed using a `yielded_nodes: set` — if a node has already streamed partials, its final event is skipped.
+- **Bug 3 — Rate limit (429) raw error shown:** Caught `RESOURCE_EXHAUSTED` in both the event loop and exception handler; replaced with a friendly retry message.
+
+---
+
+### ✅ Phase 9 — API Key & Auth Debugging
+- Diagnosed `429 RESOURCE_EXHAUSTED` caused by free-tier quota exhaustion on `gemini-2.5-flash`
+- Confirmed `GOOGLE_API_KEY` from `.env` is correctly picked up by ADK via `load_dotenv(override=True)`
+- Verified authentication flow using a standalone `google-genai` test script
+- Resolved by rotating to a new API key with available quota
+
+---
+
+## ⏳ Pending / Roadmap
+
+The following features are planned but **not yet implemented**:
+
+### 🔜 Near-Term
+| # | Feature | Notes |
+|---|---------|-------|
+| 1 | **Unit & Integration Tests** | `tests/` folder exists but tests are not written yet |
+| 2 | **Real shelter/hospital data** | Currently using mock JSON — integrate live government data APIs |
+| 3 | **Multi-district support** | Only 4 districts mocked: Wayanad, Alappuzha, Ernakulam, Idukki |
+| 4 | **Session persistence** | Sessions are in-memory only; lost on server restart |
+| 5 | **Conversation memory** | Agents don't remember previous turns within a session |
+
+### 🔮 Future Phases
+| # | Feature | Notes |
+|---|---------|-------|
+| 6 | **RAG (Retrieval-Augmented Generation)** | Index official Kerala KSDMA documents for grounded answers |
+| 7 | **Google Maps integration** | Show shelter/hospital locations on a map |
+| 8 | **Live weather & flood data** | Integrate IMD / KSDMA weather API feeds |
+| 9 | **SMS fallback** | Twilio/MSG91 integration for users without internet |
+| 10 | **Multilingual support** | Malayalam language support for local citizens |
+| 11 | **NGO real-time APIs** | Connect to volunteer networks and supply databases |
+| 12 | **Relief Supplies Agent** | New agent for food, water, medicine supply requests |
+| 13 | **Deployment to Cloud Run** | `agents-cli deploy` to GCP Cloud Run with Terraform |
+| 14 | **CI/CD pipeline** | GitHub Actions for lint, test, and deploy on push |
+| 15 | **Admin dashboard** | Real-time request volume, agent routing stats, error rates |
+
+---
+
 ## 📄 License
 
 MIT
