@@ -31,9 +31,9 @@ graph TD
     EMERGENCY -->|Tool| TE[lookup_helplines]
     GUIDANCE -->|Tool| TG[retrieve_knowledge]
 
-    style START fill:#f9f,stroke:#333,stroke-width:2px
-    style ROUTE fill:#bbf,stroke:#333,stroke-width:2px
-    style EMERGENCY fill:#f66,stroke:#333,stroke-width:2px
+    style START fill:#f9f,stroke:#333,stroke-width:2px,color:#000
+    style ROUTE fill:#bbf,stroke:#333,stroke-width:2px,color:#000
+    style EMERGENCY fill:#f66,stroke:#333,stroke-width:2px,color:#000
 ```
 
 ### Context & State Flow
@@ -137,12 +137,8 @@ This project was built by a collaborative team of engineers:
 
 | Name | Role | Primary Contributions |
 |---|---|---|
-| **[Team Member Name 1]** | **Lead Agent Architect** | Scaffolding configuration, Google ADK 2.0 graph workflow definition, and custom router logic implementations in [agent.py](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/agent.py). |
-| **[Team Member Name 2]** | **UI/UX & Streaming Engineer** | Gradio interface implementation, Server-Sent Event (SSE) streaming, classifier suppression, and response deduplication logic in [ui.py](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/ui.py). |
-| **[Team Member Name 3]** | **Data & Search Engineer** | Custom fuzzy lookup tools in [tools.py](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/tools.py), RAG indexing pipeline, and NumPy-based vector retrieval in [rag_pipeline.py](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/rag_pipeline.py). |
-| **[Team Member Name 4]** | **AI Safety & QA Engineer** | System prompt engineering, safety/vulnerability escalation rules, model testing, and validation scripts. |
-
-*Note: Please update the name placeholders above with your team's real details.*
+| **Asiya Muhammed Sali** | **Agent Architect** | Classifier agent, shelter agent, medical agent, emergency agent, and general agent — including ADK workflow graph definition, custom router/escalation logic, session memory continuity, and fuzzy lookup tools in [agent.py](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/agent.py), [tools.py](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/tools.py) & [prompts.py](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/prompts.py). |
+| **Athira V** | **RAG & Knowledge Engineer** | RAG indexing pipeline, NumPy-based vector retrieval, guidance agent integration, and knowledge base curation in [rag_pipeline.py](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/rag_pipeline.py) & [knowledge_base/](file:///c:/PROJECTS/Disaster-adk/disaster-relief/app/knowledge_base/). |
 
 ---
 
