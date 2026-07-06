@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"), override=True)
-os.environ["GEMINI_MODEL"] = "gemini-2.5-flash"
 
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
@@ -103,6 +102,15 @@ guidance_agent = Agent(
 
 # --- 3. Workflow Nodes & Routing ---
 
+def save_user_message(ctx: Context, node_input: types.Content) -> Event:
+    """Extracts and saves the user query to state, then passes the input along as data only."""
+    text = ""
+    if node_input and node_input.parts:
+        text = "".join(p.text for p in node_input.parts if p.text)
+    ctx.state["user_message"] = text
+    return Event(output=node_input)
+
+
 def route_decision(ctx: Context, node_input: dict) -> Event:
     """Extracts classification results, updates state, checks escalation rules, and routes."""
     # Check if classifier results are wrapped under 'classification' key
@@ -136,6 +144,12 @@ def route_decision(ctx: Context, node_input: dict) -> Event:
     if (priority == "critical" and route != "shelter") or is_vulnerable:
         route = "emergency"
 
+    # Memory/Session Continuity: If a follow-up response (e.g. "Ernakulam") gets classified as
+    # "general", retain the previous active flow route stored in the session state.
+    prev_route = ctx.state.get("route")
+    if route == "general" and prev_route and prev_route != "general":
+        route = prev_route
+
     # Merge into context state
     state_updates = {
         "route": route,
@@ -145,7 +159,7 @@ def route_decision(ctx: Context, node_input: dict) -> Event:
     }
 
     return Event(
-        output=node_input,
+        output=ctx.state.get("user_message", ""),
         route=route,
         state=state_updates
     )
@@ -156,7 +170,8 @@ def route_decision(ctx: Context, node_input: dict) -> Event:
 root_agent = Workflow(
     name="disaster_relief_workflow",
     edges=[
-        ('START', classifier_agent),
+        ('START', save_user_message),
+        (save_user_message, classifier_agent),
         (classifier_agent, route_decision),
         (route_decision, {
             "shelter": shelter_agent,
