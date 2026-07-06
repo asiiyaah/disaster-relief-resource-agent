@@ -148,3 +148,11 @@ This project was built by a collaborative team of engineers:
 - **v1.0 (MVP):** Added the Emergency Classifier, Shelter lookup databases, and hospital database search logic.
 - **v1.1 (Escalation & RAG):** Integrated automatic vulnerability escalation (pregnancy, infants, elderly) and local guidelines vector search.
 - **v1.2 (Bugfixes):** Fixed loop repetitions when entering locations, resolved content output duplication in the stream, and fixed 429 rate limit exceptions.
+
+---
+
+## ⭐ Support This Project
+
+If this project was helpful or interesting to you, consider giving it a star on GitHub — it helps others discover it and motivates us to keep improving it!
+
+[![GitHub Repo stars](https://img.shields.io/github/stars/asiiyaah/disaster-relief-resource-agent?style=social)](https://github.com/asiiyaah/disaster-relief-resource-agent)
